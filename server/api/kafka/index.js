@@ -1,6 +1,7 @@
 'use strict';
 
 var express = require('express');
+var kafka = require('./kafka');
 var zookeeper = require('../../config/zookeeper');
 
 var router = express.Router();
@@ -9,17 +10,30 @@ router.get('/', function(req, res) {
   res.json({ data: [] });
 });
 
-router.get('/raw', function(req, res) {
-  zookeeper.rawGetChildren(req.param('path'), function(data) {
-    res.json({ results : data });
+
+router.get('/consumers', function(req, res) {
+  var k = new kafka(zookeeper.zk);
+  k.get_consumers(function(result, data) {
+    if (result == "success") {
+      res.json({ status : "success" , data: data});
+    } else {
+      res.json({ status : "error" });
+    }
   });
 });
 
-router.get('/rawget', function(req, res) {
-  zookeeper.rawGet(req.param('path'), function(data) {
-    res.json({ results : data });
+router.get('/topics', function(req, res) {
+  var k = new kafka(zookeeper.zk);
+  k.get_topics(function(result, data) {
+    if (result == "success") {
+      res.json({ status : "success" , data: data});
+    } else {
+      res.json({ status : "error" });
+    }
   });
 });
+
+
 
 
 
