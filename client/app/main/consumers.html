@@ -1,0 +1,41 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+
+<!--<header class="hero-unit" id="banner">-->
+  <!--<div class="container">-->
+    <!--<h1>Kafka Consumers</h1>-->
+  <!--</div>-->
+<!--</header>-->
+
+<div class="container">
+  <div class="row">
+    <h1 class="page-header">Consumer groups</h1>
+    <div class="col-lg-12">
+      <div class="col-sm-4" ng-repeat="(group, groupdata) in consumers.consumers">
+        <div class="panel panel-danger">
+          <div class="panel-heading"><h3 class="panel-title">Consumer group: {{group}}</h3></div>
+          <div class="panel-body">
+            <div class="panel panel-info" ng-repeat="(topic, topicdata) in groupdata.offsets">
+              <div class="panel-heading">Topic {{topic}}</div>
+              <div class="panel-body">
+                <table class="table">
+                  <thead>
+                  <tr>
+                    <th>Partition</th><th>Offset</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr ng-repeat="(partition, offsetdata) in topicdata">
+                    <th scope="row">{{partition}}</th><td>{{offsetdata.value}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div ng-include="'components/footer.html'"></div>

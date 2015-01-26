@@ -31,7 +31,7 @@ module.exports = function (zk) {
       self.status = "pending";
       self.callback = callback;
       setTimeout(self.timeout, 9000); // in 9s, fail the call
-      self.context.browse = {}; //stack of traversed nodes
+      self.context.browse = {}; //list of traversed nodes
       self.context.get = {};
     },
 
@@ -42,13 +42,10 @@ module.exports = function (zk) {
       for (var key in self.context.browse) {
         if (!self.context.browse[key]) res_count++;
       }
-      if (self.perform_get_on_child) {
-        for (var key in self.context.get) {
-          if (!self.context.get[key]) res_count++;
-        }
+      for (var key in self.context.get) {
+        if (!self.context.get[key]) res_count++;
       }
       if (res_count == 0) { //done with all children
-        //console.log("success -> ", self.context.browse);
         self.success();
       }
     },
@@ -58,19 +55,18 @@ module.exports = function (zk) {
       var self = this;
       if (data == null) return false;
       var path_r = path.split("/");
-      if (self.debug) console.log(path_r);
+      if (self.debug) console.log(path);
       var temp_data = self.data;
       var prev_temp_data = temp_data;
       var key = path_r[0];
       if (key == '') path_r.splice(0,1);
       while (path_r.length > 0) {
         key = path_r[0];
-        if (!(key in temp_data)) {
+        if (Object.prototype.toString.call(temp_data[key]) == "[object Undefined]") {
           temp_data[key] = {};
-        } else if (typeof temp_data[key] != "object") {
-          if (self.debug) console.log(typeof temp_data[key]);
+        } else if (Object.prototype.toString.call(temp_data[key]) != "[object Object]") {
           var temp_val = temp_data[key];
-          temp_data[key] = { value: temp_val };
+          temp_data[key] = {value: temp_val};
         }
         prev_temp_data = temp_data;
         temp_data = temp_data[key];
@@ -89,7 +85,6 @@ module.exports = function (zk) {
 
     get_path: function(path) {
       var self = this;
-      //console.log('get -> ', path);
       self.context.get[path] = false;
       zk.get(path, false, function (rc, status, stat, data) {
         if (status == "ok") {
@@ -103,14 +98,12 @@ module.exports = function (zk) {
     browse_path: function(path) {
       var self = this;
       self.context.browse[path] = false;
-      if (self.debug) console.log(path + " == false");
       zk.get_children(path, false, function (rc, err, children) {
-        children.forEach(function(child) {
+        if (children) children.forEach(function(child) {
           self.browse_path(path + "/" + child); //recursion
           if (self.perform_get_on_child) self.get_path(path + "/" + child);
         });
         self.context.browse[path] = true;
-        if (self.debug) console.log(path + " == true");
         self.cleanup(); //attempt cleanup & callback
       });
     },
@@ -128,6 +121,12 @@ module.exports = function (zk) {
       var self = this;
       self.setup_async(callback);
       self.browse_path("/consumers");
+    },
+
+    get_controller: function(callback) {
+      var self = this;
+      self.setup_async(callback);
+      self.get_path("/controller");
     }
   };
 };

@@ -1,0 +1,60 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+
+<!--<header class="hero-unit" id="banner">-->
+  <!--<div class="container">-->
+    <!--<h1>Kafka Topics</h1>-->
+  <!--</div>-->
+<!--</header>-->
+
+<div class="container">
+  <div class="row">
+    <h1 class="page-header">Active Topics</h1>
+    <div class="col-lg-6" ng-repeat="(topic, topicdata) in topics.brokers.topics">
+      <div class="panel panel-default">
+        <div class="panel-body">
+        <h3>{{topic}}</h3>
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Partition</th>
+            <th>Brokers</th>
+            <th>Isr</th>
+            <th>Leader</th>
+            <th>Controller Epoch</th>
+            <th>Leader Epoch</th>
+            <th>Version</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-repeat="(partition, partitiondata) in topicdata.partitions">
+            <th scope="row">{{partition}}</th>
+            <td>{{partitiondata.value}}</td>
+            <td>{{partitiondata.state.isr}}</td>
+            <td>{{partitiondata.state.leader}}</td>
+            <td>{{partitiondata.state.controller_epoch}}</td>
+            <td>{{partitiondata.state.leader_epoch}}</td>
+            <td>{{partitiondata.state.version}}</td>
+          </tr>
+          </tbody>
+        </table>
+        <button type="button" class="btn btn-default">Details</button>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div ng-include="'components/footer.html'"></div>
+
+
+
+
+<!--<div ng-switch-when="controller.controller">-->
+
+<!--</div>-->
+<!--<div ng-switch-default>-->
+<!--Could not connect to Zookeeper.-->
+<!--</div>-->
+<!--<ul class="nav nav-tabs nav-stacked col-md-4 col-lg-4 col-sm-6" ng-repeat="thing in awesomeThings">-->
+<!--<li><a href="#" tooltip="{{thing.info}}">{{thing.name}}</a></li>-->
+<!--</ul>-->

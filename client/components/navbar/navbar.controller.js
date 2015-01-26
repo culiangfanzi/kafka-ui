@@ -2,10 +2,20 @@
 
 angular.module('kafkaUiApp')
   .controller('NavbarCtrl', function ($scope, $location) {
-    $scope.menu = [{
+    $scope.menu = [
+      {
       'title': 'Home',
       'link': '/'
-    }];
+      },
+      {
+        'title': 'Topics',
+        'link': '/topics'
+      },
+      {
+        'title': 'Consumers',
+        'link': '/consumers'
+      }
+    ];
 
     $scope.isCollapsed = true;
 

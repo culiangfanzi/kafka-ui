@@ -33,7 +33,16 @@ router.get('/topics', function(req, res) {
   });
 });
 
-
+router.get('/controller', function(req, res) {
+  var k = new kafka(zookeeper.zk);
+  k.get_controller(function(result, data) {
+    if (result == "success") {
+      res.json({ status : "success" , data: data});
+    } else {
+      res.json({ status : "error" });
+    }
+  });
+});
 
 
 
